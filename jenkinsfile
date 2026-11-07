@@ -1,0 +1,43 @@
+pipeline {
+  agent any
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Test') {
+      steps { sh 'test -f index.html' }
+    }
+    stage('Build') {
+      steps { sh 'docker build -t project2 .' }
+    }
+    stage('Deploy') {
+      steps {
+        sh 'docker stop project2 || true'
+        sh 'docker rm project2 || true'
+        sh 'docker run -d --name project2 -p 8081:80 project2'
+      }
+    }
+  }
+}
+pipeline {
+  agent any
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Test') {
+      steps { sh 'test -f index.html' }
+    }
+    stage('Build') {
+      steps { sh 'docker build -t project2 .' }
+    }
+    stage('Deploy') {
+      steps {
+        sh 'docker stop project2 || true'
+        sh 'docker rm project2 || true'
+        sh 'docker run -d --name devops-web-app -p 8081:80 project2'
+      }
+    }
+  }
+}
+
